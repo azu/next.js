@@ -639,6 +639,11 @@ export function useDynamicRouteParams(expression: string) {
 const hasSuspenseRegex = /\n\s+at Suspense \(<anonymous>\)/
 const hasSuspenseAfterBodyOrHtmlRegex =
   /\n\s+at (?:body|html) \(<anonymous>\)[\s\S]*?\n\s+at Suspense \(<anonymous>\)/
+// Detects when RootLayoutWrapper (our framework marker component) appears
+// immediately after Suspense in the component stack, indicating the root
+// layout is wrapped within a Suspense boundary
+const isRootLayoutWrappedBySuspense =
+  /\n\s+at Suspense \(<anonymous>\)\s*\n\s+at RootLayoutWrapper \(<anonymous>\)/
 const hasMetadataRegex = new RegExp(
   `\\n\\s+at ${METADATA_BOUNDARY_NAME}[\\n\\s]`
 )
@@ -665,6 +670,14 @@ export function trackAllowedDynamicAccess(
   } else if (hasSuspenseAfterBodyOrHtmlRegex.test(componentStack)) {
     // This prerender has a Suspense boundary above the body which
     // effectively opts the page into allowing 100% dynamic rendering
+    dynamicValidation.hasAllowedDynamic = true
+    dynamicValidation.hasSuspenseAboveBody = true
+    return
+  } else if (isRootLayoutWrappedBySuspense.test(componentStack)) {
+    // This prerender has the root layout wrapped within a Suspense boundary
+    // (detected via RootLayoutWrapper pattern) which effectively opts
+    // the page into allowing 100% dynamic rendering
+
     dynamicValidation.hasAllowedDynamic = true
     dynamicValidation.hasSuspenseAboveBody = true
     return
