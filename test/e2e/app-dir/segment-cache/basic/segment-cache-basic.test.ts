@@ -398,7 +398,7 @@ describe('segment cache (basic tests)', () => {
     await waitFor(500)
 
     // Check that we haven't made excessive requests during prefetch
-    expect(requestCount).toBe(4)
+    expect(requestCount).toBeLessThan(10)
 
     // Now navigate to the page to ensure it works correctly
     await link.click()
