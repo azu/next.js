@@ -387,7 +387,7 @@ export function readExactRouteCacheEntry(
   const existingEntry = routeCacheMap.get(keypath)
   if (existingEntry !== null) {
     // Check if the entry is stale
-    if (existingEntry.staleAt > now) {
+    if (existingEntry.staleAt >= now) {
       // Reuse the existing entry.
 
       // Since this is an access, move the entry to the front of the LRU.
@@ -479,7 +479,7 @@ function readExactSegmentCacheEntry(
   const existingEntry = segmentCacheMap.get(keypath)
   if (existingEntry !== null) {
     // Check if the entry is stale
-    if (existingEntry.staleAt > now) {
+    if (existingEntry.staleAt >= now) {
       // Reuse the existing entry.
 
       // Since this is an access, move the entry to the front of the LRU.
@@ -496,7 +496,7 @@ function readExactSegmentCacheEntry(
           keypath,
           revalidatingEntry
         )
-        if (upsertedEntry !== null && upsertedEntry.staleAt > now) {
+        if (upsertedEntry !== null && upsertedEntry.staleAt >= now) {
           // We can use the upserted revalidation entry.
           return upsertedEntry
         }
@@ -515,7 +515,7 @@ function readRevalidatingSegmentCacheEntry(
 ): SegmentCacheEntry | null {
   const existingRevalidation = owner.revalidating
   if (existingRevalidation !== null) {
-    if (existingRevalidation.staleAt > now) {
+    if (existingRevalidation.staleAt >= now) {
       // There's already a revalidation in progress. Or a previous revalidation
       // failed and it has not yet expired.
       return existingRevalidation

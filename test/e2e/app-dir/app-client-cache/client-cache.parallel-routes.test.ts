@@ -68,7 +68,7 @@ describe('app dir client cache with parallel routes', () => {
 
       expect(number).toBe(randomNumber)
 
-      await browser.eval(fastForwardTo, 5 * 60 * 1000)
+      await browser.eval(fastForwardTo, 5 * 60 * 1000 + 1)
 
       await browser.elementByCss('[href="/"]').click()
 
